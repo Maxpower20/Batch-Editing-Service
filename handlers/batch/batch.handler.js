@@ -8,7 +8,7 @@ async function processGetRequest(fullUrl, retryCounter) {
   } catch (e) {
     console.log('Error in sendPutRequest: ', e.message);
     if (counter) {
-      throw new Error();
+        throw new Error(e.message);
     } else {
       counter += 1;
       await processGetRequest(fullUrl, counter);
@@ -20,10 +20,15 @@ async function buildGetUrlAndSend(userId, baseUrl) {
   const fullUrl = baseUrl + userId;
   try {
     const response = await processGetRequest(fullUrl, 0);
-    return { user: { userId, data: response.data } };
+    if (!response) {
+        // 429 status results in undefined response
+        return { user: { userId, data: { status: 429, message: 'Too many requests' }} }
+    } else {
+        return { user: { userId, data: response.data } };
+    }
   } catch (e) {
     console.log(e);
-    return { user: { userId, data: { status: 503, message: 'Invocation has failed' } } };
+    return { user: { userId, data: { status: 503, message: e.message } } };
   }
 }
 
@@ -50,11 +55,11 @@ async function handleGetRequest(url, payloads) {
 async function processPutRequest(fullUrl, requestBody, retryCounter) {
   let counter = retryCounter;
   try {
-    await sendPutRequest(fullUrl, requestBody);
+    return await sendPutRequest(fullUrl, requestBody);
   } catch (e) {
     console.log('Error in sendPutRequest: ', e.message);
     if (counter) {
-      throw new Error();
+      throw new Error(e.message);
     } else {
       counter += 1;
       await processPutRequest(fullUrl, requestBody, counter);
@@ -65,11 +70,16 @@ async function processPutRequest(fullUrl, requestBody, retryCounter) {
 async function buildPutUrlAndSend(userId, baseUrl, requestBody) {
   const fullUrl = baseUrl + userId;
   try {
-    await processPutRequest(fullUrl, requestBody, 0);
-    return { Success: userId };
+    const response = await processPutRequest(fullUrl, requestBody, 0);
+    if (!response) {
+      // 429 status results in undefined response -> too many requests
+        return { Fail: { userId, status: '429 Too Many Requests'} }
+    } else {
+        return { Success: userId };
+    }
   } catch (e) {
     console.log(e);
-    return { Fail: userId };
+    return { Fail: { userId, status: e.message} };
   }
 }
 
