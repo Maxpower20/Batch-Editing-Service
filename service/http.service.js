@@ -1,20 +1,24 @@
-const axios = require('axios');
+const request = require('request-promise');
 
 function sendGetRequest(url) {
-  const axiosInstanse = axios.create({
-    baseURL: url,
-  });
-
-  return axiosInstanse.get('');
+    const options = {
+      uri: url,
+      json: true,
+      method: 'GET',
+      resolveWithFullResponse: true
+    };
+    return request(options);
 }
 
 function sendPutRequest(url, body) {
-  const axiosInstanse = axios.create({
-    baseURL: url,
-    data: body,
-  });
-
-  return axiosInstanse.put('');
+  const options = {
+    uri: url,
+      json: true,
+      method: 'PUT',
+      body: body,
+      resolveWithFullResponse: true
+  };
+  return request(options);
 }
 
 module.exports = {
