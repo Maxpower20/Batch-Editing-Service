@@ -1,6 +1,15 @@
 const request = require('request-promise');
+const Bottleneck = require('bottleneck');
 
-function sendGetRequest(url) {
+const limiter = new Bottleneck({
+    minTime: 150 //in ms -> handle Rate Limit here
+});
+
+const sendGetRequest = limiter.wrap(sendGet);
+
+const sendPutRequest = limiter.wrap(sendPut);
+
+function sendGet(url) {
     const options = {
       uri: url,
       json: true,
@@ -10,7 +19,7 @@ function sendGetRequest(url) {
     return request(options);
 }
 
-function sendPutRequest(url, body) {
+function sendPut(url, body) {
   const options = {
     uri: url,
       json: true,
