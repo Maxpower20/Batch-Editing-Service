@@ -1,6 +1,7 @@
 # Batch-Editing-Service
 
-to run application print in the terminal: 
+to run application print in the terminal:  
+npm install
 npm start
 
 application will be operating on the http://localhost:4444.
