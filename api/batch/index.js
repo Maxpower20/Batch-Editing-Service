@@ -7,7 +7,7 @@ const router = new Router();
 
 router
   .route('')
-  .put(validate(schema.batchUsers), batchUsers);
+  .post(validate(schema.batchUsers), batchUsers);
 
 
 module.exports = router;

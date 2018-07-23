@@ -8,7 +8,7 @@ function mapPutResult(resultArray) {
     if (result.hasOwnProperty('Success')) {
       resultObj.success.push({ userId: result.Success });
     } else {
-      resultObj.fail.push({ userId: result.Fail });
+      resultObj.fail.push(result.Fail);
     }
   });
 

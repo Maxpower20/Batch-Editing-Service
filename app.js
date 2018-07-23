@@ -9,12 +9,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/batch', api);
 
 // error handler
-app.use((err, req, res) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  res.status(err.status || 500);
+app.use(function(err, req, res, next) {
+    console.error(err.message); // Log error message in our server's console
+    if (!err.statusCode) {
+        err.statusCode = 500; // If err has no specified error code, set error code to 'Internal Server Error (500)'
+    }
+    res.status(err.statusCode).send(err.message);
 });
 
 module.exports = app;

@@ -5,7 +5,7 @@ const handlersMap = {
   PUT: handlePutRequest,
 };
 
-const batchUsers = async (req, res) => {
+const batchUsers = async (req, res, next) => {
   const {
     url, verb, payloads, requestBody,
   } = req.body;
@@ -20,8 +20,7 @@ const batchUsers = async (req, res) => {
       res.json(batchResult);
     }
   } catch (error) {
-    console.log(error);
-    res.status(500);
+    next(error);
   }
 };
 

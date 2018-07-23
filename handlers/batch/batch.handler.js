@@ -6,9 +6,9 @@ async function processGetRequest(fullUrl, retryCounter) {
   try {
     return await sendGetRequest(fullUrl);
   } catch (e) {
-    console.log('Error in sendPutRequest: ', e.message);
+    console.log(`Error in sendPutRequest: ${e.message}`);
     if (counter) {
-        throw new Error(e.response.statusCode + ' ' + e.response.statusMessage);
+        throw new Error(`${e.response.statusCode}  ${e.response.statusMessage}`);
     } else {
       counter += 1;
       await processGetRequest(fullUrl, counter);
@@ -32,15 +32,13 @@ async function handleGetRequest(url, payloads) {
   const promises = [];
   let result;
   try {
-    const userIds = payloads.map(userPayload => userPayload.userId);
-
-    userIds.forEach((id) => {
-      promises.push(buildGetUrlAndSend(id, baseUrl));
+    payloads.forEach((userPayload) => {
+      promises.push(buildGetUrlAndSend(userPayload.userId, baseUrl));
     });
 
     result = await Promise.all(promises);
   } catch (e) {
-    console.log('Unknown error appeared: ', e);
+      throw new Error(e.message);
   }
 
   return result;
@@ -52,9 +50,9 @@ async function processPutRequest(fullUrl, requestBody, retryCounter) {
   try {
     return await sendPutRequest(fullUrl, requestBody);
   } catch (e) {
-    console.log('Error in sendPutRequest: ', e.message);
+    console.log(`Error in sendPutRequest: ${e.message}`);
     if (counter) {
-      throw new Error(e.response.statusCode + ' ' + e.response.statusMessage);
+      throw new Error(`${e.response.statusCode}  ${e.response.statusMessage}`);
     } else {
       counter += 1;
       await processPutRequest(fullUrl, requestBody, counter);
@@ -69,7 +67,7 @@ async function buildPutUrlAndSend(userId, baseUrl, requestBody) {
     return { Success: userId };
   } catch (e) {
     console.log(e);
-    return { Fail: { userId, status: e.message} };
+    return { Fail: { userId, message: e.message} };
   }
 }
 
@@ -78,15 +76,13 @@ async function handlePutRequest(url, payloads, requestBody) {
   const promises = [];
   let result;
   try {
-    const userIds = payloads.map(userPayload => userPayload.userId);
-
-    userIds.forEach((id) => {
-      promises.push(buildPutUrlAndSend(id, baseUrl, requestBody));
+    payloads.forEach((userPayload) => {
+      promises.push(buildPutUrlAndSend(userPayload.userId, baseUrl, requestBody));
     });
 
     result = await Promise.all(promises);
   } catch (e) {
-    console.log('Unknown error appeared: ', e);
+    throw new Error(e.message);
   }
 
   return mapPutResult(result);

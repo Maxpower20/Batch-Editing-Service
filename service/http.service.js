@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const Bottleneck = require('bottleneck');
+const constants = require('../common/constants');
 
 const limiter = new Bottleneck({
     minTime: 150 //in ms -> handle Rate Limit here
@@ -13,7 +14,7 @@ function sendGet(url) {
     const options = {
       uri: url,
       json: true,
-      method: 'GET',
+      method: constants.HTTP_METHOD.GET,
       resolveWithFullResponse: true
     };
     return request(options);
@@ -23,7 +24,7 @@ function sendPut(url, body) {
   const options = {
     uri: url,
       json: true,
-      method: 'PUT',
+      method: constants.HTTP_METHOD.PUT,
       body: body,
       resolveWithFullResponse: true
   };
